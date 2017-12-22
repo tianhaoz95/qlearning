@@ -1,18 +1,23 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import Human from './human'
+import AI from './ai'
 import './App.css';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <div className="row big-title-row">
+          <h1 className="big-title">Can you beat AI? Use 1, 2, 3, 4, 5, 6 to control. Refresh to restart.</h1>
+        </div>
+        <div className="row app-row">
+          <div className="col-6 human-container">
+            <Human/>
+          </div>
+          <div className="col-6 ai-container">
+            <AI/>
+          </div>
+        </div>
       </div>
     );
   }
