@@ -8,6 +8,8 @@ class Human extends Component {
       this.state = {
         finished: false,
         time: 0,
+        finish_cnt: 0,
+        total_time: 0
       }
       this.mazeref = null;
       this.interval = null;
@@ -60,14 +62,28 @@ class Human extends Component {
   }
 
   handleStatusChange(status) {
-    if (status !== undefined && status !== null) {
-      if (status.finished !== this.state.finished) {
-        this.setState({
-          finished: status.finished
-        });
-      }
+    console.log(status);
+    if (status) {
       if (status.finished) {
+        var prev_total = this.state.total_time;
+        var curr_time = this.state.time;
+        var prev_cnt = this.state.finish_cnt;
         clearInterval(this.interval);
+        this.interval = null;
+        this.mazeref.resetmaze();
+        this.setState({
+          time: 0,
+          total_time: prev_total + curr_time,
+          finish_cnt: prev_cnt + 1,
+          finished: false
+        });
+        var thisc = this;
+        this.interval = setInterval(function () {
+          var prevt = thisc.state.time;
+          thisc.setState({
+            time: prevt + 1
+          });
+        }, 1000);
       }
     }
   }
@@ -76,7 +92,8 @@ class Human extends Component {
     return (
       <div>
         <h4 className="human-title">
-          Human, {this.state.finished ? ("Finished") : ("Not Finished")}, Time: {this.state.time} sec
+          Human, {this.state.finished ? ("Finished") : ("Not Finished")}, Time: {this.state.time} sec.
+          Finished {this.state.finish_cnt} times. Average time to completion: {Math.round(this.state.total_time/this.state.finish_cnt)} sec.
         </h4>
         <Maze onStatusChange={this.handleStatusChange} ref={(ref) => this.mazeref = ref}/>
       </div>

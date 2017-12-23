@@ -16,36 +16,42 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
+function getInit() {
+  var res = [
+    [
+      [false, false, false],[false, false, false],[false, false, false],
+      [false, false, false],[false, false, false],[false, false, false]
+    ],
+    [
+      [false, false, false],[false, false, false],[false, false, false],
+      [false, false, false],[false, false, false],[false, false, false]
+    ],
+    [
+      [false, false, false],[false, false, false],[false, false, false],
+      [false, false, false],[false, false, false],[false, false, false]
+    ],
+    [
+      [false, false, false],[false, false, false],[false, false, false],
+      [false, false, false],[false, false, false],[false, false, false]
+    ],
+    [
+      [false, false, false],[false, false, false],[false, false, false],
+      [false, false, false],[false, false, false],[false, false, false]
+    ],
+    [
+      [false, false, false],[false, false, false],[false, false, false],
+      [false, false, false],[false, false, false],[false, false, false]
+    ]
+  ];
+  return res;
+}
+
 class Maze extends Component {
   constructor(props) {
     super(props);
+    var firstMaze = getInit();
     this.state = {
-      maze: [
-        [
-          [false, false, false],[false, false, false],[false, false, false],
-          [false, false, false],[false, false, false],[false, false, false]
-        ],
-        [
-          [false, false, false],[false, false, false],[false, false, false],
-          [false, false, false],[false, false, false],[false, false, false]
-        ],
-        [
-          [false, false, false],[false, false, false],[false, false, false],
-          [false, false, false],[false, false, false],[false, false, false]
-        ],
-        [
-          [false, false, false],[false, false, false],[false, false, false],
-          [false, false, false],[false, false, false],[false, false, false]
-        ],
-        [
-          [false, false, false],[false, false, false],[false, false, false],
-          [false, false, false],[false, false, false],[false, false, false]
-        ],
-        [
-          [false, false, false],[false, false, false],[false, false, false],
-          [false, false, false],[false, false, false],[false, false, false]
-        ]
-      ],
+      maze: firstMaze,
       p: {
         x: 0,
         y: 0,
@@ -59,10 +65,11 @@ class Maze extends Component {
     this.moveleft = this.moveleft.bind(this);
     this.pickup = this.pickup.bind(this);
     this.drop = this.drop.bind(this);
+    this.resetmaze = this.resetmaze.bind(this);
   }
 
   componentDidMount() {
-    var prev = this.state.maze;
+    var prev = getInit();
     var p = getRandomCoord();
     prev[p.x][p.y][0] = true;
     var currp = this.state.p;
@@ -90,8 +97,40 @@ class Maze extends Component {
     });
   }
 
+  resetmaze() {
+    var prev = getInit();
+    console.log(prev);
+    var p = getRandomCoord();
+    prev[p.x][p.y][0] = true;
+    var currp = this.state.p;
+    currp.x = p.x;
+    currp.y = p.y;
+    currp.t = 0;
+    var t = 0;
+    while (t < task) {
+      var c1 = getRandomCoord();
+      if (!prev[c1.x][c1.y][1] && !prev[c1.x][c1.y][0]) {
+        prev[c1.x][c1.y][1] = true;
+        t = t + 1;
+      }
+    }
+    var d = 0;
+    while (d < task) {
+      var c2 = getRandomCoord();
+      if (!prev[c2.x][c2.y][1] && !prev[c2.x][c2.y][0] && !prev[c2.x][c2.y][2]) {
+        prev[c2.x][c2.y][2] = true;
+        d = d + 1;
+      }
+    }
+    this.setState({
+      maze: prev,
+      p: currp,
+      complete: 0
+    });
+  }
+
   componentDidUpdate() {
-    if (this.props.onStatusChange && this.state.complete !== undefined) {
+    if (this.props.onStatusChange && this.state.complete) {
       this.props.onStatusChange({
         finished: this.state.complete === task
       });
